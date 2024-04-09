@@ -40,10 +40,9 @@
         >
           <label class="todo__status-label">
             <input
-              data-cy="TodoStatus"
               type="checkbox"
               class="todo__status"
-              :checked="todo.completed"
+              v-model="todo.completed"
             />
           </label>
 
