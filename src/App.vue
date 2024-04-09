@@ -6,7 +6,15 @@
       return {
         todos,
       }
-    }
+    },
+    mounted() {
+
+    },
+    computed: {
+      activeTodos() {
+        return this.todos.filter(todo => !todo.completed);
+      },
+    },
   }
 </script>
 
@@ -18,12 +26,12 @@
       <header class="todoapp__header">
         <button
           type="button"
-          class="todoapp__toggle-all active"
+          class="todoapp__toggle-all"
+          :class="{ active: activeTodos.length === 0 }"
         ></button>
 
         <form>
           <input
-            data-cy="NewTodoField"
             type="text"
             class="todoapp__new-todo"
             placeholder="What needs to be done?"
@@ -73,7 +81,7 @@
 
       <footer class="todoapp__footer" data-cy="Footer">
         <span class="todo-count" data-cy="TodosCounter">
-          3 items left
+          {{ activeTodos.length }} items left
         </span>
 
         <nav class="filter" data-cy="Filter">
@@ -103,9 +111,9 @@
         </nav>
 
         <button
+          v-if="activeTodos.length > 0"
           type="button"
           class="todoapp__clear-completed"
-          data-cy="ClearCompletedButton"
         >
           Clear completed
         </button>
