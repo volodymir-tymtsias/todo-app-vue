@@ -1,3 +1,15 @@
+<script>
+  import todos from './data/todos';
+
+  export default {
+    data() {
+      return {
+        todos,
+      }
+    }
+  }
+</script>
+
 <template>
   <div class="todoapp">
     <h1 class="todoapp__title">todos</h1>
@@ -7,7 +19,6 @@
         <button
           type="button"
           class="todoapp__toggle-all active"
-          data-cy="ToggleAllButton"
         ></button>
 
         <form>
@@ -20,80 +31,44 @@
         </form>
       </header>
 
-      <section class="todoapp__main" data-cy="TodoList">
-        <div data-cy="Todo" class="todo completed">
+      <section class="todoapp__main">
+        <div 
+          v-for="todo, index of todos"
+          :key="todo.id"
+          class="todo"
+          :class="{ completed: todo.completed }"
+        >
           <label class="todo__status-label">
             <input
               data-cy="TodoStatus"
               type="checkbox"
               class="todo__status"
-              checked
+              :checked="todo.completed"
             />
           </label>
 
-          <span data-cy="TodoTitle" class="todo__title">
-            Completed Todo
-          </span>
-
-          <button type="button" class="todo__remove" data-cy="TodoDelete">
-            ×
-          </button>
-        </div>
-
-        <div data-cy="Todo" class="todo">
-          <label class="todo__status-label">
+          <form v-if="false">
             <input
-              data-cy="TodoStatus"
-              type="checkbox"
-              class="todo__status"
-            />
-          </label>
-
-          <span data-cy="TodoTitle" class="todo__title">
-            Not Completed Todo
-          </span>
-
-          <button type="button" class="todo__remove" data-cy="TodoDelete">
-            ×
-          </button>
-        </div>
-
-        <div data-cy="Todo" class="todo">
-          <label class="todo__status-label">
-            <input
-              data-cy="TodoStatus"
-              type="checkbox"
-              class="todo__status"
-            />
-          </label>
-
-          <form>
-            <input
-              data-cy="TodoTitleField"
               type="text"
               class="todo__title-field"
               placeholder="Empty todo will be deleted"
               value="Todo is being edited now"
             />
           </form>
-        </div>
 
-        <div data-cy="Todo" class="todo">
-          <label class="todo__status-label">
-            <input
-              data-cy="TodoStatus"
-              type="checkbox"
-              class="todo__status"
-            />
-          </label>
+          <template v-else>
+            <span class="todo__title">{{ todo.title }}</span>
+            <button 
+              type="button" 
+              class="todo__remove"
+              v-on:click="todos.splice(index, 1)"
+            >×</button>
+          </template>
 
-          <span data-cy="TodoTitle" class="todo__title">
-            Todo is being saved now
-          </span>
-
-          <button type="button" class="todo__remove" data-cy="TodoDelete">
-            ×
-          </button>
+          <div class="modal overlay" :class="{ 'is-active': false }">
+            <div class="modal-background has-background-white-ter"></div>
+            <div class="loader"></div>
+          </div>
         </div>
       </section>
 
@@ -139,3 +114,6 @@
     </div>
   </div>
 </template>
+
+<style>
+</style>
