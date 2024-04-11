@@ -1,4 +1,5 @@
 <script>
+  import { createTodo, deleteTodo, getTodos, updateTodo } from './api/todos';
   import StatusFilter from './components/StatusFilter.vue';
   import TodoItem from './components/TodoItem.vue';
   import todos from './data/todos';
@@ -9,15 +10,15 @@
       TodoItem,
     },
     data() {
-      let todos = [];
-      const jsonData = localStorage.getItem('todos') || '[]';
+      // let todos = [];
+      // const jsonData = localStorage.getItem('todos') || '[]';
 
-      try {
-        todos = JSON.parse(jsonData);
-      } catch (e) {}
+      // try {
+      //   todos = JSON.parse(jsonData);
+      // } catch (e) {}
 
       return {
-        todos,
+        todos: [],
         title: '',
         status: 'all',
       }
@@ -42,24 +43,40 @@
         }
       }
     },
-    watch: {
-      todos: {
-        deep: true,
-        handler() {
-          localStorage.setItem('todos', JSON.stringify(this.todos));
-        },
-      }
+    // watch: {
+    //   todos: {
+    //     deep: true,
+    //     handler() {
+    //       localStorage.setItem('todos', JSON.stringify(this.todos));
+    //     },
+    //   }
+    // },
+    mounted() {
+      getTodos()
+        .then(({ data }) => {
+          this.todos = data;
+        })
     },
     methods: {
       handleSubmit() {
-        this.todos.push({
-          id: Date.now(),
-          title: this.title,
-          completed: false,
-        });
-
-        this.title = '';
-      }
+        createTodo(this.title)
+          .then(({ data }) => {
+            this.todos = [...this.todos, data];
+            this.title = '';
+          });
+      },
+      updateCurrentTodo({ id, title, completed }) {
+        updateTodo({ id, title, completed })
+          .then(({ data }) => {
+            this.todos = this.todos.map(todo => todo.id === id ? data : todo)
+          });
+      },
+      deleteCurrentTodo(todoId) {
+        deleteTodo(todoId)
+          .then(() => {
+            this.todos = this.todos.filter(todo => todo.id !== todoId);
+          });
+      },
     }
   }
 </script>
@@ -95,8 +112,8 @@
           v-for="todo, index of visibleTodos"
           :key="todo.id"
           :todo="todo"
-          @update="Object.assign(todo, $event)"
-          @delete="todos.splice(todos.indexOf(todo), 1)"
+          @update="updateCurrentTodo"
+          @delete="deleteCurrentTodo(todo.id)"
         />
       </TransitionGroup>
 
