@@ -1,5 +1,6 @@
 <script>
   import { createTodo, deleteTodo, getTodos, updateTodo } from './api/todos';
+import Message from './components/Message.vue';
   import StatusFilter from './components/StatusFilter.vue';
   import TodoItem from './components/TodoItem.vue';
   import todos from './data/todos';
@@ -8,6 +9,7 @@
     components: {
       StatusFilter,
       TodoItem,
+      Message,
     },
     data() {
       // let todos = [];
@@ -21,6 +23,7 @@
         todos: [],
         title: '',
         status: 'all',
+        errorMessage: '',
       }
     },
     computed: {
@@ -56,6 +59,9 @@
         .then(({ data }) => {
           this.todos = data;
         })
+        .catch(() => {
+          this.errorMessage = 'Unable to load todos';
+        });
     },
     methods: {
       handleSubmit() {
@@ -63,19 +69,40 @@
           .then(({ data }) => {
             this.todos = [...this.todos, data];
             this.title = '';
+          })
+          .catch(() => {
+            this.errorMessage = 'Unable to add a todo';
           });
       },
       updateCurrentTodo({ id, title, completed }) {
         updateTodo({ id, title, completed })
           .then(({ data }) => {
             this.todos = this.todos.map(todo => todo.id === id ? data : todo)
+          })
+          .catch(() => {
+            this.errorMessage = 'Unable to update a todo';
           });
       },
       deleteCurrentTodo(todoId) {
         deleteTodo(todoId)
           .then(() => {
             this.todos = this.todos.filter(todo => todo.id !== todoId);
+          })
+          .catch(() => {
+            this.errorMessage = 'Unable to delete a todo';
           });
+      },
+      deleteCompletedTodos() {
+        const todosToDelete = this.completedTodos.map(todo => deleteTodo(todo.id));
+
+        Promise.all(todosToDelete)
+          .then(() => this.todos = this.activeTodos)
+          .catch(() => {
+            this.errorMessage = 'Unable to delete a completed todos';
+          });
+      },
+      toggleAllTodos() {
+        const togglingTodos = todoIdsForToggle.map(id => updateTodo(id, data));
       },
     }
   }
@@ -126,14 +153,29 @@
         <StatusFilter v-model="status" />
 
         <button
-          v-if="activeTodos.length > 0"
+          v-if="completedTodos.length > 0"
           type="button"
           class="todoapp__clear-completed"
+          @click="deleteCompletedTodos"
         >
           Clear completed
         </button>
       </footer>
     </div>
+
+    <Message 
+      class="is-danger" 
+      :active="errorMessage !== ''"
+      @hide="errorMessage = ''"
+    >
+      <template #default>
+        <p>{{ errorMessage }}</p>
+      </template>
+
+      <template #header>
+        <p>Server Error</p>
+      </template>
+    </Message>
   </div>
 </template>
 
