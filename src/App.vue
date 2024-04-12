@@ -102,7 +102,18 @@ import Message from './components/Message.vue';
           });
       },
       toggleAllTodos() {
-        const togglingTodos = todoIdsForToggle.map(id => updateTodo(id, data));
+        const todosToToggle = this.activeTodos.length > 1
+          ? this.activeTodos.map(todo => updateTodo({ ...todo, completed: true }))
+          : this.todos.map(todo => updateTodo({ ...todo, completed: false }));
+
+        Promise.all(todosToToggle)
+          .then((responses) => this.todos = this.activeTodos.length > 1
+            ? [...this.completedTodos, ...responses.map(response => response.data)]
+            : responses.map(response => response.data)
+          )
+          .catch(() => {
+            this.errorMessage = 'Unable to update a todos';
+          });
       },
     }
   }
@@ -118,6 +129,7 @@ import Message from './components/Message.vue';
           type="button"
           class="todoapp__toggle-all"
           :class="{ active: activeTodos.length === 0 }"
+          @click="toggleAllTodos"
         ></button>
 
         <form @submit.prevent="handleSubmit">
