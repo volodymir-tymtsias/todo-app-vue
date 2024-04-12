@@ -1,29 +1,21 @@
 # todo-app-vue
 
-This template should help get you started developing with Vue 3 in Vite.
+#### [DEMO LINK](https://volodymir-tymtsias.github.io/todo-app-vue/)
+---
+ToDo App is a single page application that is a to-do list. To-do are stored both in the localStorage of the browser and on the server using the API. The application implements the processing of API access errors with the output of corresponding messages to the user. The application's simple interface allows you to add, delete and edit to-do. Double-click to edit a to-do. You can mark the completion of the to-do either one by one or all at once. It is possible to immediately delete all to-do marked as completed. There is a filter of to-do according to the status of completion, as well as a counter of uncompleted to-do.
 
-## Recommended IDE Setup
+The following technologies and libraries were used during creation:
+-	HTML
+-	CSS
+-	SASS
+-	Bulma
+- JavaScript
+-	Vue.js
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
+To run locally, copy the application and run the commands
+```bash
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
+# and
 npm run dev
 ```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
-```
+Open [http://localhost:5173/todo-app-vue/](http://localhost:5173/todo-app-vue/) to view it in the browser
